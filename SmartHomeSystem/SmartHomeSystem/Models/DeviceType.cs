@@ -12,5 +12,11 @@ namespace SmartHomeSystem.Models
         public ICollection<Device> Devices { get; set; }
         public ICollection<NumberParameter> NumberParametersForDeviceType { get; set; }
         public ICollection<StringParameter> StringParametersForDeviceType { get; set; }
+        public virtual ICollection<DeviceTypeAvailableValues> DeviceTypeAvailableValues { get; set; }
+
+        public DeviceType()
+        {
+            DeviceTypeAvailableValues = new HashSet<DeviceTypeAvailableValues>();
+        }
     }
 }

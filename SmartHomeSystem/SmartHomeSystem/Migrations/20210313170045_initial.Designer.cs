@@ -9,8 +9,8 @@ using SmartHomeSystem.Context;
 namespace SmartHomeSystem.Migrations
 {
     [DbContext(typeof(SmartHomeSystemDBContext))]
-    [Migration("20210313120340_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20210313170045_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,10 +19,51 @@ namespace SmartHomeSystem.Migrations
                 .HasAnnotation("ProductVersion", "3.1.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("SmartHomeSystem.Models.Archive", b =>
+                {
+                    b.Property<int>("ArchiveId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdateDateTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<int?>("UpdatedDeviceId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UpdatedValueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArchiveId");
+
+                    b.HasIndex("UpdatedDeviceId");
+
+                    b.HasIndex("UpdatedValueId");
+
+                    b.ToTable("Archives");
+                });
+
+            modelBuilder.Entity("SmartHomeSystem.Models.AvailableVals", b =>
+                {
+                    b.Property<int>("AvailableValuesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("AvailableValuesId");
+
+                    b.ToTable("AvailableVals");
+                });
+
             modelBuilder.Entity("SmartHomeSystem.Models.Device", b =>
                 {
                     b.Property<int>("DeviceId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DPCurrentValue")
                         .HasColumnType("int");
 
                     b.Property<int?>("DeviceHomeHomeId")
@@ -36,11 +77,27 @@ namespace SmartHomeSystem.Migrations
 
                     b.HasKey("DeviceId");
 
+                    b.HasIndex("DPCurrentValue");
+
                     b.HasIndex("DeviceHomeHomeId");
 
                     b.HasIndex("DeviceTypeId");
 
                     b.ToTable("Devices");
+                });
+
+            modelBuilder.Entity("SmartHomeSystem.Models.DeviceParameterCurrentValue", b =>
+                {
+                    b.Property<int>("DeviceParamCurrentValId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("DeviceParamCurrentValId");
+
+                    b.ToTable("DeviceParameterCurrentValues");
                 });
 
             modelBuilder.Entity("SmartHomeSystem.Models.DeviceType", b =>
@@ -55,6 +112,48 @@ namespace SmartHomeSystem.Migrations
                     b.HasKey("DeviceTypeId");
 
                     b.ToTable("DeviceTypes");
+                });
+
+            modelBuilder.Entity("SmartHomeSystem.Models.DeviceTypeAvailableValues", b =>
+                {
+                    b.Property<int>("DeviceTypeAvailableValuesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("AvailableValsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeviceTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DeviceTypeAvailableValuesId");
+
+                    b.HasIndex("AvailableValsId");
+
+                    b.HasIndex("DeviceTypeId");
+
+                    b.ToTable("DeviceTypeAvailableValues");
+                });
+
+            modelBuilder.Entity("SmartHomeSystem.Models.DevicesCurrentValues", b =>
+                {
+                    b.Property<int>("DevicesCurrentValuesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeviceParameterCurrentValueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DevicesCurrentValuesId");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("DeviceParameterCurrentValueId");
+
+                    b.ToTable("DevicesCurrentValues");
                 });
 
             modelBuilder.Entity("SmartHomeSystem.Models.Home", b =>
@@ -97,6 +196,9 @@ namespace SmartHomeSystem.Migrations
                     b.Property<int>("MinValue")
                         .HasColumnType("int");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
                     b.HasKey("NumberParameterId");
 
                     b.HasIndex("DeviceTypeId");
@@ -116,10 +218,10 @@ namespace SmartHomeSystem.Migrations
                     b.Property<int?>("DeviceTypeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("MaxValue")
-                        .HasColumnType("text");
+                    b.Property<bool>("IsLimitedToAvailableValue")
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("MinValue")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("StringParameterId");
@@ -170,8 +272,23 @@ namespace SmartHomeSystem.Migrations
                     b.ToTable("UserHomes");
                 });
 
+            modelBuilder.Entity("SmartHomeSystem.Models.Archive", b =>
+                {
+                    b.HasOne("SmartHomeSystem.Models.Device", "UpdatedDevice")
+                        .WithMany("Archives")
+                        .HasForeignKey("UpdatedDeviceId");
+
+                    b.HasOne("SmartHomeSystem.Models.DeviceParameterCurrentValue", "UpdatedValue")
+                        .WithMany("Archives")
+                        .HasForeignKey("UpdatedValueId");
+                });
+
             modelBuilder.Entity("SmartHomeSystem.Models.Device", b =>
                 {
+                    b.HasOne("SmartHomeSystem.Models.DeviceParameterCurrentValue", "Device_Parameter_Current_Value")
+                        .WithMany("Devices")
+                        .HasForeignKey("DPCurrentValue");
+
                     b.HasOne("SmartHomeSystem.Models.Home", "DeviceHome")
                         .WithMany("DevicesInHome")
                         .HasForeignKey("DeviceHomeHomeId");
@@ -179,6 +296,36 @@ namespace SmartHomeSystem.Migrations
                     b.HasOne("SmartHomeSystem.Models.DeviceType", "DeviceType")
                         .WithMany("Devices")
                         .HasForeignKey("DeviceTypeId");
+                });
+
+            modelBuilder.Entity("SmartHomeSystem.Models.DeviceTypeAvailableValues", b =>
+                {
+                    b.HasOne("SmartHomeSystem.Models.AvailableVals", null)
+                        .WithMany("DeviceTypeAvailableValues")
+                        .HasForeignKey("AvailableValsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmartHomeSystem.Models.DeviceType", null)
+                        .WithMany("DeviceTypeAvailableValues")
+                        .HasForeignKey("DeviceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SmartHomeSystem.Models.DevicesCurrentValues", b =>
+                {
+                    b.HasOne("SmartHomeSystem.Models.Device", null)
+                        .WithMany("DevicesCurrentValues")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmartHomeSystem.Models.DeviceParameterCurrentValue", null)
+                        .WithMany("DevicesCurrentValues")
+                        .HasForeignKey("DeviceParameterCurrentValueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SmartHomeSystem.Models.Home", b =>

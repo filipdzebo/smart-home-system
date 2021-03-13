@@ -19,9 +19,15 @@ namespace SmartHomeSystem.Context
         public DbSet<Device> Devices { get; set; }
 
         public DbSet<UserHome> UserHomes { get; set; }
+        public DbSet<AvailableVals> AvailableVals { get; set; }
+
         public DbSet<Home> Homes { get; set; }
         public DbSet<NumberParameter> NumberParameters { get; set; }
         public DbSet<StringParameter> StringParameters { get; set; }
         public DbSet<DeviceType> DeviceTypes { get; set; }
+        public DbSet<Archive> Archives { get; set; }
+        public DbSet<DeviceParameterCurrentValue> DeviceParameterCurrentValues { get; set; }
+        public DbSet<DevicesCurrentValues> DevicesCurrentValues { get; set; }
+        public DbSet<DeviceTypeAvailableValues> DeviceTypeAvailableValues { get; set; }
     }
 }

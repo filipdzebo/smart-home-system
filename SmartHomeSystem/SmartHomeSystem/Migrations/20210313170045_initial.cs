@@ -1,12 +1,39 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace SmartHomeSystem.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AvailableVals",
+                columns: table => new
+                {
+                    AvailableValuesId = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AvailableVals", x => x.AvailableValuesId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeviceParameterCurrentValues",
+                columns: table => new
+                {
+                    DeviceParamCurrentValId = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceParameterCurrentValues", x => x.DeviceParamCurrentValId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "DeviceTypes",
                 columns: table => new
@@ -36,11 +63,38 @@ namespace SmartHomeSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DeviceTypeAvailableValues",
+                columns: table => new
+                {
+                    DeviceTypeAvailableValuesId = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    DeviceTypeId = table.Column<int>(nullable: false),
+                    AvailableValsId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceTypeAvailableValues", x => x.DeviceTypeAvailableValuesId);
+                    table.ForeignKey(
+                        name: "FK_DeviceTypeAvailableValues_AvailableVals_AvailableValsId",
+                        column: x => x.AvailableValsId,
+                        principalTable: "AvailableVals",
+                        principalColumn: "AvailableValuesId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeviceTypeAvailableValues_DeviceTypes_DeviceTypeId",
+                        column: x => x.DeviceTypeId,
+                        principalTable: "DeviceTypes",
+                        principalColumn: "DeviceTypeId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NumberParameters",
                 columns: table => new
                 {
                     NumberParameterId = table.Column<int>(nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
                     MinValue = table.Column<int>(nullable: false),
                     MaxValue = table.Column<int>(nullable: false),
                     DefaultValue = table.Column<int>(nullable: false),
@@ -63,8 +117,8 @@ namespace SmartHomeSystem.Migrations
                 {
                     StringParameterId = table.Column<int>(nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    MinValue = table.Column<string>(nullable: true),
-                    MaxValue = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    IsLimitedToAvailableValue = table.Column<bool>(nullable: false),
                     DefaultValue = table.Column<string>(nullable: true),
                     DeviceTypeId = table.Column<int>(nullable: true)
                 },
@@ -108,11 +162,18 @@ namespace SmartHomeSystem.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
                     DeviceHomeHomeId = table.Column<int>(nullable: true),
-                    DeviceTypeId = table.Column<int>(nullable: true)
+                    DeviceTypeId = table.Column<int>(nullable: true),
+                    DPCurrentValue = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Devices", x => x.DeviceId);
+                    table.ForeignKey(
+                        name: "FK_Devices_DeviceParameterCurrentValues_DPCurrentValue",
+                        column: x => x.DPCurrentValue,
+                        principalTable: "DeviceParameterCurrentValues",
+                        principalColumn: "DeviceParamCurrentValId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Devices_Homes_DeviceHomeHomeId",
                         column: x => x.DeviceHomeHomeId,
@@ -153,6 +214,74 @@ namespace SmartHomeSystem.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Archives",
+                columns: table => new
+                {
+                    ArchiveId = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    UpdateDateTime = table.Column<DateTime>(nullable: false),
+                    UpdatedDeviceId = table.Column<int>(nullable: true),
+                    UpdatedValueId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Archives", x => x.ArchiveId);
+                    table.ForeignKey(
+                        name: "FK_Archives_Devices_UpdatedDeviceId",
+                        column: x => x.UpdatedDeviceId,
+                        principalTable: "Devices",
+                        principalColumn: "DeviceId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Archives_DeviceParameterCurrentValues_UpdatedValueId",
+                        column: x => x.UpdatedValueId,
+                        principalTable: "DeviceParameterCurrentValues",
+                        principalColumn: "DeviceParamCurrentValId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DevicesCurrentValues",
+                columns: table => new
+                {
+                    DevicesCurrentValuesId = table.Column<int>(nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    DeviceId = table.Column<int>(nullable: false),
+                    DeviceParameterCurrentValueId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DevicesCurrentValues", x => x.DevicesCurrentValuesId);
+                    table.ForeignKey(
+                        name: "FK_DevicesCurrentValues_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalTable: "Devices",
+                        principalColumn: "DeviceId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DevicesCurrentValues_DeviceParameterCurrentValues_DevicePara~",
+                        column: x => x.DeviceParameterCurrentValueId,
+                        principalTable: "DeviceParameterCurrentValues",
+                        principalColumn: "DeviceParamCurrentValId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Archives_UpdatedDeviceId",
+                table: "Archives",
+                column: "UpdatedDeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Archives_UpdatedValueId",
+                table: "Archives",
+                column: "UpdatedValueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Devices_DPCurrentValue",
+                table: "Devices",
+                column: "DPCurrentValue");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_DeviceHomeHomeId",
                 table: "Devices",
@@ -161,6 +290,26 @@ namespace SmartHomeSystem.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_DeviceTypeId",
                 table: "Devices",
+                column: "DeviceTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DevicesCurrentValues_DeviceId",
+                table: "DevicesCurrentValues",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DevicesCurrentValues_DeviceParameterCurrentValueId",
+                table: "DevicesCurrentValues",
+                column: "DeviceParameterCurrentValueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceTypeAvailableValues_AvailableValsId",
+                table: "DeviceTypeAvailableValues",
+                column: "AvailableValsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceTypeAvailableValues_DeviceTypeId",
+                table: "DeviceTypeAvailableValues",
                 column: "DeviceTypeId");
 
             migrationBuilder.CreateIndex(
@@ -192,7 +341,13 @@ namespace SmartHomeSystem.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Devices");
+                name: "Archives");
+
+            migrationBuilder.DropTable(
+                name: "DevicesCurrentValues");
+
+            migrationBuilder.DropTable(
+                name: "DeviceTypeAvailableValues");
 
             migrationBuilder.DropTable(
                 name: "NumberParameters");
@@ -204,10 +359,19 @@ namespace SmartHomeSystem.Migrations
                 name: "UserHomes");
 
             migrationBuilder.DropTable(
-                name: "DeviceTypes");
+                name: "Devices");
+
+            migrationBuilder.DropTable(
+                name: "AvailableVals");
+
+            migrationBuilder.DropTable(
+                name: "DeviceParameterCurrentValues");
 
             migrationBuilder.DropTable(
                 name: "Homes");
+
+            migrationBuilder.DropTable(
+                name: "DeviceTypes");
 
             migrationBuilder.DropTable(
                 name: "Users");
