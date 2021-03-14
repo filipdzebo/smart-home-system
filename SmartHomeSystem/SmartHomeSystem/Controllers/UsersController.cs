@@ -26,7 +26,7 @@ namespace SmartHomeSystem.Controllers
         
         [HttpPost]
         [Route("Register")]
-        public async void Register(UserRequestModel user_req)
+        public  void Register(UserRequestModel user_req)
         {
             User user = new User();
             try
@@ -50,6 +50,27 @@ namespace SmartHomeSystem.Controllers
                 _context.SaveChanges();
             }
             
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login(UserRequestModel user_req)
+        {
+            User user = new User();
+            try
+            {
+                user = _context.Users.Where(usr => (usr.Username == user_req.Username &&
+                usr.Password == user_req.Password)).ToList()[0];
+            }
+            catch (Exception e)
+            {
+                user = null;
+            }
+            if (user != null)
+            {
+                return  Ok();
+            }
+            return NotFound();
         }
 
         // GET: api/Users
