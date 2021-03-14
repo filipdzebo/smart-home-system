@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartHomeSystem.Context;
 using SmartHomeSystem.Models;
+using SmartHomeSystem.RequestModels;
 
 namespace SmartHomeSystem.Controllers
 {
@@ -19,6 +20,24 @@ namespace SmartHomeSystem.Controllers
         public DevicesController(SmartHomeSystemDBContext context)
         {
             _context = context;
+        }
+
+        [HttpPost]
+        [Route("DeviceCreate")]
+        public async void Create(DeviceRequestModel device_req)
+        {
+            Device new_device = new Device();
+            new_device.Name = device_req.Name;
+            new_device.DeviceHome = null;
+            new_device.DeviceType = null;
+            new_device.Device_Parameter_Current_Value = null;
+            try
+            {
+                _context.Devices.Add(new_device);
+                _context.SaveChanges();
+            }
+            catch { }
+
         }
 
         // GET: api/Devices
