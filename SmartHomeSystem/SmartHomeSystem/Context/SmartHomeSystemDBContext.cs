@@ -15,6 +15,11 @@ namespace SmartHomeSystem.Context
                 .UseMySQL("server = localhost; database = bsmartdb; user = root; password = ");
         }
 
+        public SmartHomeSystemDBContext(DbContextOptions<SmartHomeSystemDBContext> options):base(options)
+        {
+
+        }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Device> Devices { get; set; }
 

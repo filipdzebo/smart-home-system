@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "to4291d6q11Od/FVAIhy48GZlu0F5ESm8L0d8w5dZfPQWICNdBXw4A6KBVwAz2ClZN2+oP6kENVC8NcA1vgLxw==",
+  "dgSpecHash": "F3/yW7auMU8jR+x7QNDaxXkUx2z1ngvWhv8ozFv6A5grvVBrFLxBszByhHK0Ml8jhlK7uZruQlYC2gkt1hUhRg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Korisnik\\Documents\\GitHub\\smart-home-system\\SmartHomeSystem\\SmartHomeSystem\\SmartHomeSystem.csproj",
   "expectedPackageFiles": [
@@ -9,6 +9,7 @@
     "C:\\Users\\Korisnik\\.nuget\\packages\\k4os.compression.lz4\\1.1.11\\k4os.compression.lz4.1.1.11.nupkg.sha512",
     "C:\\Users\\Korisnik\\.nuget\\packages\\k4os.compression.lz4.streams\\1.1.11\\k4os.compression.lz4.streams.1.1.11.nupkg.sha512",
     "C:\\Users\\Korisnik\\.nuget\\packages\\k4os.hash.xxhash\\1.0.6\\k4os.hash.xxhash.1.0.6.nupkg.sha512",
+    "C:\\Users\\Korisnik\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.13\\microsoft.aspnetcore.authentication.jwtbearer.3.1.13.nupkg.sha512",
     "C:\\Users\\Korisnik\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Korisnik\\.nuget\\packages\\microsoft.aspnetcore.razor\\2.2.0\\microsoft.aspnetcore.razor.2.2.0.nupkg.sha512",
     "C:\\Users\\Korisnik\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\3.1.0\\microsoft.aspnetcore.razor.language.3.1.0.nupkg.sha512",
