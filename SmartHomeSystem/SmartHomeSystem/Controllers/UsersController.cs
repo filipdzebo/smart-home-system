@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartHomeSystem.Context;
 using SmartHomeSystem.Models;
+using SmartHomeSystem.RequestModels;
+using System.Net;
+using System.Net.Http;
 
 namespace SmartHomeSystem.Controllers
 {
@@ -19,6 +22,34 @@ namespace SmartHomeSystem.Controllers
         public UsersController(SmartHomeSystemDBContext context)
         {
             _context = context;
+        }
+        
+        [HttpPost]
+        [Route("Register")]
+        public async void Register(UserRequestModel user_req)
+        {
+            User user = new User();
+            try
+            {
+                user = _context.Users.Where(usr => (usr.Username == user_req.Username &&
+                usr.Password == user_req.Password)).ToList()[0];
+            }catch(Exception e)
+            {
+                 user = null;
+            }
+            if(user == null)
+            {
+                User new_user = new User();
+                new_user.Username = user_req.Username;
+                new_user.Password = user_req.Password;
+                new_user.Email = user_req.Email;
+                new_user.FirstName = user_req.FirstName;
+                new_user.LastName = user_req.LastName;
+
+                _context.Users.Add(new_user);
+                _context.SaveChanges();
+            }
+            
         }
 
         // GET: api/Users
