@@ -73,6 +73,7 @@ namespace SmartHomeSystem.Controllers
             return NotFound();
         }
 
+
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()

@@ -41,6 +41,14 @@ namespace SmartHomeSystem.Controllers
             
         }
 
+        [HttpPost]
+        [Route("HomesOfUser")]
+        public async Task<ActionResult<Home>> GetHomesOfUser(int id)
+        {
+            List<Home> logged_user_homes = _context.Homes.Where(home => home.Owner.UserId == id).ToList();
+            return  Ok(logged_user_homes);
+        }
+
         // GET: api/Homes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Home>>> GetHomes()
